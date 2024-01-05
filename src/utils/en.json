@@ -1,0 +1,11 @@
+{
+  "brand.caption": "",
+  "nav.stores": "stores",
+  "nav.users": "users",
+  "signup.heading": "Create an account",
+  "signup.formLabels.emailInput": "Email",
+  "signup.formLabels.username": "Username",
+  "signup.formLabels.password": "Password",
+  "stores.heading": "Store management",
+  "stores.addStoreButton": "Add new store"
+}
