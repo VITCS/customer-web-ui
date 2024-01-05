@@ -1,0 +1,66 @@
+version: 0.2
+
+env:
+  git-credential-helper: yes
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 16
+    commands:
+      # Install packages or any pre-reqs in this phase.
+      # Upgrading SAM CLI to latest version
+      - pip3 install --upgrade aws-sam-cli
+      - pip3 install --force-reinstall "cryptography==38.0.4"
+      - sam --version
+      #  Switch to Deployment Account.  (Development account for dev & sit, Production account for prd)
+      - TEMP_ROLE=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name prodplatform)
+      - export TEMP_ROLE
+      - export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r '.Credentials.AccessKeyId')
+      - export AWS_SECRET_ACCESS_KEY=$(echo "${TEMP_ROLE}" | jq -r '.Credentials.SecretAccessKey')
+      - export AWS_SESSION_TOKEN=$(echo "${TEMP_ROLE}" | jq -r '.Credentials.SessionToken')
+
+  pre_build:
+    commands:
+      - echo Installing source NPM dependencies...
+      - aws s3 cp  s3://${ExportsBucket}/customer-web-ui/${Environment}/aws-exports.js ./src
+      - yarn install
+  build:
+    commands:
+      - echo Build started on `date`
+      - yarn build
+  post_build:
+    commands:
+      - bash -c "if [ \"$CODEBUILD_BUILD_SUCCEEDING\" == \"0\" ]; then exit 1; fi"
+      # copy the contents of /build to S3
+      - aws s3 rm --recursive "s3://${DeployBucket}/"
+      - aws s3 cp --recursive --acl public-read ./build s3://${DeployBucket}/
+      # browser caching
+      - aws s3 cp --acl public-read --cache-control="max-age=0, no-cache, no-store, must-revalidate" ./build/service-worker.js s3://${DeployBucket}/
+      # set the cache-control headers for index.html to prevent browser caching
+      - aws s3 cp --acl public-read --cache-control="max-age=0, no-cache, no-store, must-revalidate" ./build/index.html s3://${DeployBucket}/
+      # invalidate the CloudFront cache for index.html and service-worker.js to force CloudFront to update its edge locations with the new versions
+      #  -  aws cloudfront create-invalidation --distribution-id ${Distribution} --paths /index.html /service-worker.js
+
+      #  Backup the Repository
+      - ls -ltr
+      - unset AWS_ACCESS_KEY_ID
+      - unset AWS_SECRET_ACCESS_KEY
+      - unset AWS_SESSION_TOKEN
+      - git config --global --unset-all credential.helper
+      - git config --global credential.helper '!aws codecommit credential-helper $@'
+      - git config --global credential.UseHttpPath true
+      - git clone --mirror https://git-codecommit.us-east-1.amazonaws.com/v1/repos/${REPO_NAME} LocalRepository
+      - cd LocalRepository
+      - git remote set-url --push origin https://git-codecommit.${BACKUP_REPO_REGION}.amazonaws.com/v1/repos/${REPO_NAME}
+      - git config --global credential.helper '!aws codecommit credential-helper $@'
+      - git config --global credential.UseHttpPath true
+      - git fetch -p origin
+      - git push --mirror
+      - cd ..
+      - rm -rf  LocalRepository
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: build

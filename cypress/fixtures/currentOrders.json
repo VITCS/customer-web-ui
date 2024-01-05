@@ -1,0 +1,79 @@
+{
+  "listOrdersByUserId": {
+    "nextToken": "xxxx",
+    "items": [
+      {
+        "orderStatus": "Created",
+        "orderShipment": {
+          "items": [
+            {
+              "actionType": null,
+              "assignedStoreId": "4999113666811234",
+              "deliveryType": "Home Delivery",
+              "shipmentStatus": "ShelfToCounter",
+              "assignedStoreName": "COSTCO GASOLINE #1199",
+              "createdAt": "2022-08-10T17:57:15.899Z",
+              "rejectionMsg": null,
+              "isUpdated": false,
+              "deliveryAddress": {
+                "addrLine1": "24 Glacier Dr",
+                "addrLine2": "24 Glacier Dr",
+                "city": "West Windsor",
+                "country": "USA",
+                "latitude": 40.27478,
+                "longitude": -74.62813,
+                "postCode": "08550",
+                "state": "NJ"
+              },
+              "id": "3740013314655394",
+              "orderId": "4156687511058054",
+              "orderLineItems": [
+                {
+                  "id": null,
+                  "prodShortDesc": "",
+                  "productId": "UA_011034503825",
+                  "productName": "Martini & Rossi Rose Wine Rose Blend",
+                  "qtyPurchased": 1,
+                  "size": 100,
+                  "totalPrice": "13.99",
+                  "unitPrice": "13.99",
+                  "uom": 100
+                }
+              ],
+              "statusHistory": {
+                "fromStatus": "fromStatus",
+                "toStatus": "toStatus",
+                "updatedBy": "updatedBy",
+                "updatedAt": null
+              },
+              "subTotalAmount": 29.92,
+              "subTotalDeliveryCharges": 4.9,
+              "subTotalDiscount": 0,
+              "subTotalProductAmount": 13.99,
+              "subTotalTax": 1.03,
+              "subTotalTipAmount": 10,
+              "updatedAt": "2022-08-10T17:57:15.899Z",
+              "updatedBy": "arun",
+              "userId": "arun"
+            }
+          ],
+          "nextToken": null
+        },
+        "cartId": "1780076541330521",
+        "channel": "direct",
+        "createdAt": "2022-08-10T17:57:15.899Z",
+        "id": "4156687511058054",
+        "totalAmount": 0,
+        "totalDeliveryCharges": 0,
+        "totalDiscount": 0,
+        "totalProductAmount": 0,
+        "totalTaxAmount": 0,
+        "totalTipAmount": 0,
+        "transactionId": "1780076541330521",
+        "updatedAt": "2022-08-10T17:57:15.899Z",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+        "userId": "arun"
+      }
+    ]
+  }
+}
